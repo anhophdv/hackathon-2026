@@ -75,8 +75,11 @@ export default function HomePage() {
             <span className="ph-chip-muted">
               <Clock4 className="h-3 w-3" /> Updated 2 min ago
             </span>
-            <Link href="/recommendations" className="ph-btn-primary">
-              See all recommendations <ArrowRight className="h-4 w-4" />
+            <Link href="/today" className="ph-btn-primary">
+              Today's Plan <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link href="/copilot" className="ph-btn-dark">
+              Ask Copilot
             </Link>
           </>
         }

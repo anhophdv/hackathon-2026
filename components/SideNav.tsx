@@ -11,10 +11,16 @@ import {
   ListChecks,
   Bell,
   Pizza,
+  MessageCircle,
+  CalendarCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const NAV = [
+const NAV_PRIMARY = [
+  { href: "/today", label: "Today's Plan", Icon: CalendarCheck },
+  { href: "/copilot", label: "Copilot", Icon: MessageCircle },
+];
+const NAV_SECONDARY = [
   { href: "/", label: "Store Health", Icon: Home },
   { href: "/predictions", label: "Predictions", Icon: TrendingUp },
   { href: "/recommendations", label: "Recommendations", Icon: Lightbulb },
@@ -31,10 +37,10 @@ export function SideNav() {
       <div className="px-2 py-3 mb-2 flex items-center gap-2">
         <Pizza className="h-5 w-5 text-ph-yellow" />
         <span className="text-xs font-bold uppercase tracking-widest text-ph-yellow">
-          Store OS
+          Copilot
         </span>
       </div>
-      {NAV.map(({ href, label, Icon }) => {
+      {NAV_PRIMARY.map(({ href, label, Icon }) => {
         const active = path === href;
         return (
           <Link
@@ -44,7 +50,28 @@ export function SideNav() {
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition",
               active
                 ? "bg-ph-red text-white shadow-pop"
-                : "text-white/80 hover:bg-white/10",
+                : "bg-white/5 text-white hover:bg-white/10",
+            )}
+          >
+            <Icon className="h-4 w-4" />
+            {label}
+          </Link>
+        );
+      })}
+      <div className="mt-4 mb-1 px-2 text-[10px] font-bold uppercase tracking-widest text-white/50">
+        Explore
+      </div>
+      {NAV_SECONDARY.map(({ href, label, Icon }) => {
+        const active = path === href;
+        return (
+          <Link
+            key={href}
+            href={href}
+            className={cn(
+              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition",
+              active
+                ? "bg-ph-red text-white shadow-pop"
+                : "text-white/75 hover:bg-white/10",
             )}
           >
             <Icon className="h-4 w-4" />

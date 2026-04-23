@@ -19,11 +19,14 @@ export function TopBar() {
         <div className="flex items-center gap-2.5">
           <PizzaHutMark className="h-9 w-9" />
           <div className="leading-tight">
-            <div className="font-extrabold text-[15px] tracking-tight">
-              Store Operations Command Center
+            <div className="font-extrabold text-[15px] tracking-tight flex items-center gap-1.5">
+              Smart Planning Copilot
+              <span className="hidden sm:inline text-[10px] font-bold px-1.5 py-0.5 rounded bg-ph-yellow text-ph-black tracking-wider">
+                v2
+              </span>
             </div>
             <div className="text-[11px] text-white/85 -mt-0.5">
-              Pizza Hut UK · Manager Console
+              Pizza Hut UK · from data to timely, confident decisions
             </div>
           </div>
         </div>

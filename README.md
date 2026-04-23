@@ -1,11 +1,22 @@
-# Pizza Hut UK · Store Operations Command Center
+# Pizza Hut UK · Smart Planning Copilot
+
+> *"We're not building a dashboard — we're building a system that turns data
+> into **timely, confident decisions**, enabling managers to operate proactively
+> instead of reactively."*
 
 A demo web app that turns 4 weeks of mocked Pizza Hut UK order data into
-**predictive insights → explainable recommendations → executable plans** for a
-store manager, wrapped in a simple, manager-friendly UI.
+**predictive insights → explainable recommendations → executable plans**, with
+a **conversational Copilot** on top. Built for the *Hackathon Team 6 — Store
+Operations Command Center for Store Managers* PRD.
 
-Built for the *Hackathon Team 6 — Store Operations Command Center for Store
-Managers* PRD.
+Version history:
+
+- **v1.0-demo** (`git tag v1.0-demo`) — the original 7-page Store Operations
+  Command Center.
+- **v2.0-copilot** (this version) — adds the two PDF demo use cases:
+  **UC1 "Today's Plan"** (single-screen manager view with top-3 actions and
+  hour-by-hour stockout risks) and **UC2 What-if Simulation** as a natural-language
+  **Smart Planning Copilot** chat.
 
 ---
 
@@ -30,18 +41,31 @@ lucide-react.
 
 ## What the demo shows
 
-Seven manager pages, all powered by the same in-browser, deterministic data
-generator and forecast engine — no backend required.
+Nine manager pages, all powered by the same in-browser, deterministic engines
+— no backend required.
 
-| Page | What it does |
+| # | Page | What it does |
+|---|---|---|
+| ★ | **Today's Plan** (`/today`) | **UC1.** Single-screen manager view: big headline ("Demand +30% vs typical Friday"), **top-3 action cards** with qty/%/owner/deadline, **hour-by-hour stockout timeline** with specific clock times ("Mozzarella runs out at 12:45 PM"), before/after story, 5-step guided demo banner. |
+| ★ | **Copilot** (`/copilot`) | **UC2.** Conversational Smart Planning Copilot. Ask *"What if I reduce prep by 20%?"*, *"Why is demand higher?"*, *"When will we run out of dough?"*. Every answer cites drivers + confidence, shows inline action cards, and leaves the manager in control. |
+| 1 | **Store Health** (`/`) | Today's KPIs (sales, orders, labour, availability, ticket time), top 3 risks for tomorrow, hourly orders chart, daily briefing. |
+| 2 | **Predictions** (`/predictions`) | 7-/14-day demand forecast with P10–P90 confidence band, top SKUs, tomorrow's prep plan, recommended supplier order with quantities, packs, cost and cutoff. |
+| 3 | **Recommendations** (`/recommendations`) | Explainable cards: *why it matters → drivers → executable plan steps with owner, time, qty → expected impact → confidence*. One-click "Assign as task". |
+| 4 | **What-if Planner** (`/what-if`) | Sliders for weather, local event, promo uplift, marketing push, price. Live re-forecast and re-derived inventory plan. Save/load named scenarios. |
+| 5 | **Accuracy (WoW)** (`/accuracy`) | Walk-forward back-test of predicted vs actual, MAPE, bias, P10–P90 hit rate, this-week vs last-week bar chart. |
+| 6 | **Tasks** (`/tasks`) | Created from recommendations, assignable, status (new/in-progress/blocked/done/verified). Persisted in `localStorage`. |
+| 7 | **Alerts** (`/alerts`) | Prioritised feed across the next 72h with severity, freshness, confidence. |
+
+### How v2 maps to the demo PDF
+
+| PDF moment | Where to show it |
 |---|---|
-| **Store Health** (`/`) | Today's KPIs (sales, orders, labour, availability, ticket time), top 3 risks for tomorrow, hourly orders chart, daily briefing. |
-| **Predictions** (`/predictions`) | 7-/14-day demand forecast with P10–P90 confidence band, top SKUs, tomorrow's prep plan, recommended supplier order with quantities, packs, cost and cutoff. |
-| **Recommendations** (`/recommendations`) | Explainable cards: *why it matters → drivers → executable plan steps with owner, time, qty → expected impact → confidence*. One-click "Assign as task". |
-| **What-if Planner** (`/what-if`) | Sliders for weather, local event, promo uplift, marketing push, price. Live re-forecast and re-derived inventory plan. Save/load named scenarios. |
-| **Accuracy (WoW)** (`/accuracy`) | Walk-forward back-test of predicted vs actual, MAPE, bias, P10–P90 hit rate, this-week vs last-week bar chart. |
-| **Tasks** (`/tasks`) | Created from recommendations, assignable, status (new/in-progress/blocked/done/verified). Persisted in `localStorage`. |
-| **Alerts** (`/alerts`) | Prioritised feed across the next 72h with severity, freshness, confidence. |
+| "Demand will increase by 30% today" | Today's Plan hero headline |
+| "Prepare 120 units of Item A (+25%)" | Today's Plan top-3 action cards (numbered 1/2/3) |
+| "Risk: Ingredient shortage at 1 PM" | Today's Plan stockout timeline + red-bordered risk list |
+| Manager: *"Why?"* | Copilot prompt → grounded answer citing last 3 weekdays + active promo |
+| Manager: *"What if I don't increase prep?"* | Copilot prompt → "You run out of mozzarella at 12:50 PM" |
+| Step-by-step demo story | Guided 5-step banner at top of Today's Plan |
 
 ---
 
