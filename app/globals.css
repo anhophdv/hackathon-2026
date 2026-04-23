@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap");
+
+:root {
+  --ph-red: #ee3124;
+  --ph-yellow: #ffce00;
+  --ph-black: #0f0f10;
+  --ph-surface: #f7f5f2;
+}
+
+html,
+body {
+  background: var(--ph-surface);
+  color: var(--ph-black);
+  font-family: "Open Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .ph-card {
+    @apply bg-ph-card border border-ph-line rounded-2xl shadow-card;
+  }
+  .ph-chip {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold;
+  }
+  .ph-chip-red {
+    @apply ph-chip bg-ph-red/10 text-ph-red;
+  }
+  .ph-chip-amber {
+    @apply ph-chip bg-ph-amber/15 text-ph-amber;
+  }
+  .ph-chip-green {
+    @apply ph-chip bg-ph-green/10 text-ph-green;
+  }
+  .ph-chip-muted {
+    @apply ph-chip bg-ph-line text-ph-ink;
+  }
+  .ph-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-3.5 py-2 text-sm font-semibold transition;
+  }
+  .ph-btn-primary {
+    @apply ph-btn bg-ph-red text-white hover:bg-ph-redDark shadow-pop;
+  }
+  .ph-btn-ghost {
+    @apply ph-btn bg-transparent text-ph-ink hover:bg-ph-line;
+  }
+  .ph-btn-dark {
+    @apply ph-btn bg-ph-black text-white hover:bg-ph-ink;
+  }
+  .ph-h1 {
+    @apply text-2xl md:text-3xl font-extrabold tracking-tight text-ph-black;
+  }
+  .ph-h2 {
+    @apply text-lg font-bold text-ph-black;
+  }
+  .ph-label {
+    @apply text-xs font-semibold uppercase tracking-wider text-ph-muted;
+  }
+}
+
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d8d4ce;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bcb6ae;
+}
