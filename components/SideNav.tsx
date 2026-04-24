@@ -35,7 +35,7 @@ export function SideNav() {
   const path = usePathname();
   const { t } = useT();
   return (
-    <nav className="hidden md:flex md:flex-col w-60 shrink-0 bg-ph-black text-white p-4 gap-1">
+    <nav className="hidden md:flex md:flex-col w-60 shrink-0 bg-ph-black text-white p-4 gap-1 md:sticky md:top-14 md:self-start md:h-[calc(100vh-3.5rem)] md:overflow-y-auto">
       <div className="px-2 py-3 mb-2 flex items-center gap-2">
         <Pizza className="h-5 w-5 text-ph-yellow" />
         <span className="text-xs font-bold uppercase tracking-widest text-ph-yellow">

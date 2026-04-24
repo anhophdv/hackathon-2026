@@ -8,7 +8,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <TopBar />
       <div className="flex flex-1">
         <SideNav />
-        <main className="flex-1 p-4 md:p-8 max-w-[1500px] w-full mx-auto">
+        <main className="flex-1 p-4 md:px-8 md:py-5 max-w-[1500px] w-full mx-auto">
           {children}
         </main>
       </div>
@@ -26,7 +26,7 @@ export function PageHeader({
   right?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-6">
+    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-4">
       <div>
         <h1 className="ph-h1">{title}</h1>
         {subtitle && (

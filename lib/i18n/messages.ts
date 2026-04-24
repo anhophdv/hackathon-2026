@@ -311,6 +311,9 @@ const en: Messages = {
   "rec.task_created": "Task created",
   "rec.why": "Why?",
   "rec.hide_why": "Hide why",
+  "rec.why_short": "Why:",
+  "rec.expand": "Tap for full plan",
+  "rec.collapse": "Collapse",
   "rec.show_plan": "Show full plan ({n} more step{s})",
   "rec.hide_plan": "Hide full plan",
 

@@ -80,15 +80,15 @@ export default function TodayPlanPage() {
 
       <DemoBanner />
 
-      <section className="ph-card p-6 md:p-8 mb-6 relative overflow-hidden">
+      <section className="ph-card p-4 md:p-6 mb-4 relative overflow-hidden">
         <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-ph-red/5" />
         <div className="absolute right-10 bottom-0 h-32 w-32 rounded-full bg-ph-yellow/10" />
-        <div className="relative grid md:grid-cols-3 gap-6 items-center">
+        <div className="relative grid md:grid-cols-3 gap-4 items-center">
           <div className="md:col-span-2">
             <div className="ph-label flex items-center gap-1.5 text-ph-red">
               <Flame className="h-3.5 w-3.5" /> {t("page.today.hero_label")}
             </div>
-            <h2 className="text-[40px] md:text-[56px] leading-[1.05] font-extrabold text-ph-black mt-1">
+            <h2 className="text-[32px] md:text-[44px] leading-[1.05] font-extrabold text-ph-black mt-1">
               {t("page.today.hero_headline", { pct: pctText, weekday })
                 .split(pctText)
                 .flatMap((part, i, arr) =>
@@ -97,7 +97,7 @@ export default function TodayPlanPage() {
                     : [part],
                 )}
             </h2>
-            <p className="text-ph-muted mt-2 text-base md:text-lg">
+            <p className="text-ph-muted mt-1.5 text-sm md:text-base">
               {t("page.today.hero_sub", {
                 orders: Math.round(bundle.forecast.p50),
                 revenue: formatGBP(bundle.forecast.revenue),
@@ -144,8 +144,8 @@ export default function TodayPlanPage() {
         </div>
       </section>
 
-      <section className="mb-6">
-        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+      <section className="mb-4">
+        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
           <h2 className="ph-h2 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-ph-red" />
             {t("page.today.top3_title")}
@@ -154,14 +154,14 @@ export default function TodayPlanPage() {
             {t("page.today.top3_caption")}
           </span>
         </div>
-        <div className="space-y-4">
+        <div className="grid gap-3 md:grid-cols-3 items-stretch">
           {top3.map((r, i) => (
             <BigActionCard key={r.id} index={i + 1} rec={r} />
           ))}
         </div>
       </section>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
           <StockoutTimeline
             buckets={timeline.buckets}
