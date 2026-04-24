@@ -109,7 +109,7 @@ const en: Messages = {
   "page.today.stat_tasks_sub": "{remaining} of top 3 to go",
   "page.today.top3_title": "Top 3 actions for today",
   "page.today.top3_caption":
-    "Prioritised by impact × confidence · signal over noise",
+    "Each card shows what to do, why to do it, and the expected impact — no clicking to understand.",
   "page.today.before_after_title": "Before vs after",
   "page.today.before": "Before",
   "page.today.after": "After",
@@ -299,15 +299,20 @@ const en: Messages = {
 
   // ---------- BigActionCard / RecommendationCard ----------
   "rec.confidence": "Confidence {pct}%",
-  "rec.why_matters": "Why it matters",
+  "rec.why_matters": "Why take this action",
   "rec.drivers": "Drivers",
+  "rec.based_on": "Based on",
+  "rec.what_to_do": "What to do",
   "rec.plan": "Executable plan",
   "rec.impact": "Expected impact:",
+  "rec.impact_if_act": "Impact if you act",
   "rec.assign": "Assign as task",
   "rec.assigned": "Assigned",
   "rec.task_created": "Task created",
   "rec.why": "Why?",
   "rec.hide_why": "Hide why",
+  "rec.show_plan": "Show full plan ({n} more step{s})",
+  "rec.hide_plan": "Hide full plan",
 
   // ---------- Stockout timeline ----------
   "timeline.title": "Stockout timeline",

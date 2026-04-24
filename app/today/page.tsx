@@ -154,7 +154,7 @@ export default function TodayPlanPage() {
             {t("page.today.top3_caption")}
           </span>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="space-y-4">
           {top3.map((r, i) => (
             <BigActionCard key={r.id} index={i + 1} rec={r} />
           ))}
