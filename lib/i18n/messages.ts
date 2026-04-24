@@ -134,6 +134,85 @@ const en: Messages = {
   "page.today.trust_see_accuracy": "See accuracy",
   "page.today.promo_active": "{name} in play",
 
+  // ---------- Auto shift management (Today's Plan) ----------
+  "page.today.shifts.title": "Auto shift management",
+  "page.today.shifts.subtitle":
+    "Per-station staffing plan for today, derived from your order history and today's forecast.",
+  "page.today.shifts.chip_forecast": "Forecast-driven",
+  "page.today.shifts.chip_refreshed": "Refreshed {n} min ago",
+  "page.today.shifts.chip_history": "Based on last 4 {weekday}s",
+
+  "page.today.shifts.summary_alignment": "Plan alignment",
+  "page.today.shifts.summary_alignment_sub": "{matches}/{total} hours match",
+  "page.today.shifts.summary_short": "Hours short",
+  "page.today.shifts.summary_short_sub": "stations under-staffed",
+  "page.today.shifts.summary_over": "Hours over",
+  "page.today.shifts.summary_over_sub": "stations over-staffed",
+  "page.today.shifts.summary_savings": "Potential saving",
+  "page.today.shifts.summary_savings_sub": "vs scheduled labour",
+
+  "page.today.shifts.heatmap_title": "Station staffing plan",
+  "page.today.shifts.heatmap_caption":
+    "Big number = recommended heads for the station at that hour. Small number = scheduled. Colour = fit.",
+  "page.today.shifts.legend_match": "On plan",
+  "page.today.shifts.legend_short": "Under-staffed",
+  "page.today.shifts.legend_critical": "Critical gap (−2+)",
+  "page.today.shifts.legend_over": "Over-staffed",
+  "page.today.shifts.legend_off": "Closed",
+  "page.today.shifts.cell_title":
+    "{role} · {hour}:00 — plan {rec} · scheduled {actual} · demand {demand} ({pct}% util)",
+  "page.today.shifts.cell_title_headcount":
+    "{role} · {hour}:00 — plan {rec} · scheduled {actual}",
+  "page.today.shifts.cell_title_off":
+    "{role} · {hour}:00 — station closed / no demand",
+
+  "page.today.shifts.stations_title": "Hours per station",
+  "page.today.shifts.stations_caption":
+    "Scheduled vs recommended head-hours for today.",
+  "page.today.shifts.station_scheduled": "Scheduled",
+  "page.today.shifts.station_recommended": "Plan",
+  "page.today.shifts.station_delta_add": "Need +{n}h",
+  "page.today.shifts.station_delta_cut": "Over by {n}h",
+  "page.today.shifts.station_delta_match": "On plan",
+
+  "page.today.shifts.adjustments_title": "Recommended adjustments",
+  "page.today.shifts.adjustments_caption":
+    "Add or release heads at the stations that deviate most from the plan.",
+  "page.today.shifts.adjustments_empty":
+    "Roster already matches today's station plan — no adjustments needed.",
+  "page.today.shifts.adj_add":
+    "Add {n} {role} — {fromHour}:00 to {toHour}:00",
+  "page.today.shifts.adj_cut":
+    "Release {n} {role} — {fromHour}:00 to {toHour}:00",
+  "page.today.shifts.adj_impact_add":
+    "Protects ~{orders} orders · {gbp} revenue at-risk saved",
+  "page.today.shifts.adj_impact_cut":
+    "Saves ~{gbp} labour cost without hurting throughput",
+  "page.today.shifts.adj_confidence": "{pct}% confidence",
+  "page.today.shifts.adj_cta": "Create task",
+
+  "page.today.shifts.moves_title": "How to realise the plan",
+  "page.today.shifts.moves_caption":
+    "Cross-train moves using staff already on today's rota — no new hires needed.",
+  "page.today.shifts.moves_empty":
+    "No cross-role moves available — adjustments above require a schedule change.",
+  "page.today.shifts.move_template":
+    "Move {name} from {from} to {to}, {fromHour}:00–{toHour}:00",
+  "page.today.shifts.move_impact":
+    "+{orders} orders protected · {gbp} revenue at-risk saved",
+  "page.today.shifts.move_confidence": "{pct}% confidence",
+  "page.today.shifts.move_cta": "Create task",
+  "page.today.shifts.trust":
+    "Plan built from last 4 same-weekday histories + today's forecast · you stay in control.",
+  "page.today.shifts.collapse": "Hide details",
+  "page.today.shifts.expand": "Show details",
+  "page.today.shifts.mini_alignment": "alignment",
+  "page.today.shifts.mini_short": "short",
+  "page.today.shifts.mini_over": "over",
+  "page.today.shifts.mini_savings": "potential saving",
+  "page.today.shifts.mini_adjustments": "adjustments",
+  "page.today.shifts.mini_hint": "Click the card to expand",
+
   "page.copilot.title": "Byte by Yum!",
   "page.copilot.subtitle":
     "Ask anything about today: demand, risks, what-ifs. Every answer cites drivers and confidence. You stay in control.",
@@ -319,6 +398,8 @@ const en: Messages = {
 
   // ---------- Stockout timeline ----------
   "timeline.title": "Stockout timeline",
+  "timeline.collapse": "Hide timeline",
+  "timeline.expand": "Show timeline",
   "timeline.caption":
     "Hour-by-hour demand vs on-hand. Red bars mark the hour where an ingredient depletes.",
   "timeline.risk_count_one": "{n} projected risk",

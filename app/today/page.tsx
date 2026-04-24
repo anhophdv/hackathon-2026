@@ -17,10 +17,13 @@ import {
 import { PageHeader } from "@/components/Shell";
 import { BigActionCard } from "@/components/BigActionCard";
 import { DemoBanner } from "@/components/DemoBanner";
+import { ShiftBoard } from "@/components/ShiftBoard";
 import { StockoutTimeline } from "@/components/StockoutTimeline";
 import { useHistory } from "@/lib/data/useHistory";
 import { buildRecommendations } from "@/lib/forecast/recommendations";
+import { buildShiftPlan } from "@/lib/forecast/shifts";
 import { buildTimeline } from "@/lib/forecast/timeline";
+import { SHIFTS } from "@/lib/mock/labor";
 import { addDays, formatGBP, formatNumber } from "@/lib/utils";
 import { promoForDate } from "@/lib/mock/orders";
 import { useAppStore } from "@/lib/state/store";
@@ -44,6 +47,11 @@ export default function TodayPlanPage() {
   const timeline = useMemo(
     () => buildTimeline({ forecast: bundle.forecast }),
     [bundle.forecast],
+  );
+
+  const shiftPlan = useMemo(
+    () => buildShiftPlan(history, bundle.forecast, today, SHIFTS),
+    [history, bundle.forecast, today],
   );
 
   const lastWeekDay = history.days.find(
@@ -172,11 +180,12 @@ export default function TodayPlanPage() {
       </section>
 
       <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-4">
           <StockoutTimeline
             buckets={timeline.buckets}
             stockouts={timeline.stockouts}
           />
+          <ShiftBoard plan={shiftPlan} weekday={weekday} />
         </div>
 
         <aside className="space-y-4">

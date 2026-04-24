@@ -19,13 +19,13 @@ import { useT } from "@/lib/i18n/useT";
 
 const NAV_PRIMARY = [
   { href: "/today", key: "sidenav.today", Icon: CalendarCheck },
+  { href: "/what-if", key: "sidenav.whatif", Icon: Sliders },
   { href: "/copilot", key: "sidenav.copilot", Icon: MessageCircle },
 ];
 const NAV_SECONDARY = [
   { href: "/store-health", key: "sidenav.home", Icon: Home },
   { href: "/predictions", key: "sidenav.predictions", Icon: TrendingUp },
   { href: "/recommendations", key: "sidenav.recommendations", Icon: Lightbulb },
-  { href: "/what-if", key: "sidenav.whatif", Icon: Sliders },
   { href: "/accuracy", key: "sidenav.accuracy", Icon: LineChart },
   { href: "/tasks", key: "sidenav.tasks", Icon: ListChecks },
   { href: "/alerts", key: "sidenav.alerts", Icon: Bell },
