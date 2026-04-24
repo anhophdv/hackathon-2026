@@ -83,8 +83,8 @@ export default function TodayPlanPage() {
       <section className="ph-card p-4 md:p-6 mb-4 relative overflow-hidden">
         <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-ph-red/5" />
         <div className="absolute right-10 bottom-0 h-32 w-32 rounded-full bg-ph-yellow/10" />
-        <div className="relative grid md:grid-cols-3 gap-4 items-center">
-          <div className="md:col-span-2">
+        <div className="relative flex flex-col gap-4">
+          <div>
             <div className="ph-label flex items-center gap-1.5 text-ph-red">
               <Flame className="h-3.5 w-3.5" /> {t("page.today.hero_label")}
             </div>
@@ -93,7 +93,17 @@ export default function TodayPlanPage() {
                 .split(pctText)
                 .flatMap((part, i, arr) =>
                   i < arr.length - 1
-                    ? [part, <span key={i} className="text-ph-red">{pctText}</span>]
+                    ? [
+                        part,
+                        <span
+                          key={i}
+                          className={
+                            orderDelta >= 0 ? "text-ph-green" : "text-ph-red"
+                          }
+                        >
+                          {pctText}
+                        </span>,
+                      ]
                     : [part],
                 )}
             </h2>
@@ -115,7 +125,7 @@ export default function TodayPlanPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 md:grid-cols-1 gap-3">
+          <div className="grid grid-cols-3 gap-3 border-t border-ph-line pt-4">
             <StatPill
               icon={<TrendingUp className="h-4 w-4" />}
               label={t("page.today.stat_orders")}
@@ -124,7 +134,7 @@ export default function TodayPlanPage() {
                 low: Math.round(bundle.forecast.p10),
                 high: Math.round(bundle.forecast.p90),
               })}
-              tone="red"
+              tone={orderDelta >= 0 ? "green" : "red"}
             />
             <StatPill
               icon={<AlertTriangle className="h-4 w-4" />}
