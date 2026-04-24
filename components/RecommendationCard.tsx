@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useAppStore } from "@/lib/state/store";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n/useT";
 
 const CATEGORY_ICON: Record<Recommendation["category"], any> = {
   Inventory: Package,
@@ -42,6 +43,7 @@ export function RecommendationCard({
   const created = useAppStore((s) =>
     s.tasks.some((t) => t.source === rec.id && t.status !== "verified"),
   );
+  const { t } = useT();
 
   return (
     <div className="ph-card p-5 flex flex-col gap-4">
@@ -52,10 +54,10 @@ export function RecommendationCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <SeverityChip severity={rec.severity} />
-            <span className="ph-chip-muted">{rec.category}</span>
+            <span className="ph-chip-muted">{t(`category.${rec.category}`)}</span>
             <FreshnessBadge mins={rec.freshnessMins} />
             <span className="text-[11px] text-ph-muted ml-auto">
-              Confidence {Math.round(rec.confidence * 100)}%
+              {t("rec.confidence", { pct: Math.round(rec.confidence * 100) })}
             </span>
           </div>
           <h3 className="font-bold text-[15px] text-ph-black leading-snug">
@@ -68,11 +70,11 @@ export function RecommendationCard({
         <>
           <div className="grid md:grid-cols-2 gap-3">
             <div>
-              <div className="ph-label mb-1.5">Why it matters</div>
+              <div className="ph-label mb-1.5">{t("rec.why_matters")}</div>
               <p className="text-sm text-ph-ink">{rec.whyItMatters}</p>
             </div>
             <div>
-              <div className="ph-label mb-1.5">Drivers</div>
+              <div className="ph-label mb-1.5">{t("rec.drivers")}</div>
               <ul className="text-sm text-ph-ink space-y-1">
                 {rec.drivers.slice(0, 5).map((d, i) => (
                   <li key={i} className="flex items-start gap-2">
@@ -85,7 +87,7 @@ export function RecommendationCard({
           </div>
 
           <div>
-            <div className="ph-label mb-1.5">Executable plan</div>
+            <div className="ph-label mb-1.5">{t("rec.plan")}</div>
             <ol className="space-y-2">
               {rec.steps.map((s, i) => (
                 <li
@@ -104,7 +106,9 @@ export function RecommendationCard({
                     )}
                   </div>
                   {s.owner && (
-                    <span className="ph-chip-muted whitespace-nowrap">{s.owner}</span>
+                    <span className="ph-chip-muted whitespace-nowrap">
+                      {t(`owner.${s.owner}`)}
+                    </span>
                   )}
                 </li>
               ))}
@@ -114,7 +118,7 @@ export function RecommendationCard({
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-ph-line">
             <div className="flex items-center gap-2 text-sm text-ph-ink">
               <Target className="h-4 w-4 text-ph-green" />
-              <span className="font-semibold">Expected impact:</span>
+              <span className="font-semibold">{t("rec.impact")}</span>
               <span>{rec.expectedImpact}</span>
             </div>
             <button
@@ -127,11 +131,11 @@ export function RecommendationCard({
             >
               {created ? (
                 <>
-                  <CheckCircle2 className="h-4 w-4" /> Task created
+                  <CheckCircle2 className="h-4 w-4" /> {t("rec.task_created")}
                 </>
               ) : (
                 <>
-                  <PlusCircle className="h-4 w-4" /> Assign as task
+                  <PlusCircle className="h-4 w-4" /> {t("rec.assign")}
                 </>
               )}
             </button>

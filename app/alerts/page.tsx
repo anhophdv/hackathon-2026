@@ -10,13 +10,14 @@ import { SeverityChip } from "@/components/SeverityChip";
 import { FreshnessBadge } from "@/components/FreshnessBadge";
 import { AlertTriangle, ChevronRight, Bell } from "lucide-react";
 import Link from "next/link";
+import { useT } from "@/lib/i18n/useT";
 
 export default function AlertsPage() {
   const history = useHistory();
   const whatIf = useAppStore((s) => s.whatIf);
   const [sev, setSev] = useState<"all" | "high" | "med" | "low">("all");
+  const { t } = useT();
 
-  // Build a stream of alerts from the next 3 days
   const allRecs = useMemo(() => {
     const out: Array<{
       date: Date;
@@ -32,14 +33,18 @@ export default function AlertsPage() {
 
   const filtered = sev === "all" ? allRecs : allRecs.filter((x) => x.r.severity === sev);
 
+  const labelFor = (key: "all" | "high" | "med" | "low") =>
+    key === "all" ? t("common.all") : t(`severity.${key}`);
+
   return (
     <>
       <PageHeader
-        title="Alerts"
-        subtitle="Prioritised exception feed across the next 72 hours. Click an alert to open the full recommendation with drivers and executable plan."
+        title={t("page.alerts.title")}
+        subtitle={t("page.alerts.subtitle")}
         right={
           <span className="ph-chip-muted">
-            <Bell className="h-3 w-3" /> {allRecs.length} active
+            <Bell className="h-3 w-3" />{" "}
+            {t("page.alerts.active", { n: allRecs.length })}
           </span>
         }
       />
@@ -61,14 +66,20 @@ export default function AlertsPage() {
                 : "bg-ph-line text-ph-ink"
             }`}
           >
-            {s} ({s === "all" ? allRecs.length : allRecs.filter((x) => x.r.severity === s).length})
+            {labelFor(s)} (
+            {s === "all"
+              ? allRecs.length
+              : allRecs.filter((x) => x.r.severity === s).length}
+            )
           </button>
         ))}
       </div>
 
       <div className="ph-card overflow-hidden">
         {filtered.length === 0 && (
-          <div className="p-8 text-center text-ph-muted">No alerts at this severity.</div>
+          <div className="p-8 text-center text-ph-muted">
+            {t("page.alerts.empty")}
+          </div>
         )}
         {filtered.map(({ date, r }) => (
           <Link
@@ -88,9 +99,11 @@ export default function AlertsPage() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-0.5">
                 <SeverityChip severity={r.severity} />
-                <span className="ph-chip-muted">{r.category}</span>
+                <span className="ph-chip-muted">{t(`category.${r.category}`)}</span>
                 <FreshnessBadge mins={r.freshnessMins} />
-                <span className="text-[11px] text-ph-muted">For {ddmm(date)}</span>
+                <span className="text-[11px] text-ph-muted">
+                  {t("page.alerts.for_date", { date: ddmm(date) })}
+                </span>
               </div>
               <div className="font-semibold text-sm text-ph-black truncate">
                 {r.title}
@@ -98,7 +111,7 @@ export default function AlertsPage() {
               <div className="text-xs text-ph-muted truncate">{r.whyItMatters}</div>
             </div>
             <span className="text-[11px] text-ph-muted hidden md:block">
-              {Math.round(r.confidence * 100)}% conf.
+              {t("page.alerts.conf", { n: Math.round(r.confidence * 100) })}
             </span>
             <ChevronRight className="h-4 w-4 text-ph-muted group-hover:text-ph-red" />
           </Link>

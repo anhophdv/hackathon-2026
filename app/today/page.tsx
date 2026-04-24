@@ -8,7 +8,6 @@ import {
   Sparkles,
   TrendingUp,
   Users,
-  CheckCircle2,
   Clock4,
   Flame,
   AlertTriangle,
@@ -25,19 +24,17 @@ import { buildTimeline } from "@/lib/forecast/timeline";
 import { addDays, formatGBP, formatNumber } from "@/lib/utils";
 import { promoForDate } from "@/lib/mock/orders";
 import { useAppStore } from "@/lib/state/store";
+import { useT } from "@/lib/i18n/useT";
 
-// Today's Plan — the manager's single-screen answer to "what do I do today?"
-// Mirrors UC1 from the demo PDF: big headline, top-3 action cards with qty/%,
-// specific-time risk list, plus a before/after story banner.
 export default function TodayPlanPage() {
   const history = useHistory();
   const whatIf = useAppStore((s) => s.whatIf);
   const tasks = useAppStore((s) => s.tasks);
+  const { t, longWeekday } = useT();
 
-  // Target "today" = the most recent day in the mock history.
   const today = history.endDate;
   const lastWeek = addDays(today, -7);
-  const weekday = today.toLocaleDateString("en-GB", { weekday: "long" });
+  const weekday = longWeekday(today);
 
   const bundle = useMemo(
     () => buildRecommendations(history, today, whatIf),
@@ -60,19 +57,22 @@ export default function TodayPlanPage() {
 
   const top3 = bundle.recs.slice(0, 3);
   const assigned = tasks.filter((t) => t.status !== "verified").length;
+  const remaining = Math.min(3, bundle.recs.length) - Math.min(assigned, 3);
+  const confidenceBand = `${Math.round((bundle.forecast.p10 / bundle.forecast.p50) * 100)}–${Math.round((bundle.forecast.p90 / bundle.forecast.p50) * 100)}%`;
 
   return (
     <>
       <PageHeader
-        title={`Today's Plan · ${weekday}`}
-        subtitle="Your single source of truth for the shift. Top 3 actions, specific-time risks, and a one-tap assign to the team."
+        title={t("page.today.title", { weekday })}
+        subtitle={t("page.today.subtitle")}
         right={
           <>
             <span className="ph-chip-muted">
-              <Clock4 className="h-3 w-3" /> Forecast refreshed 2 min ago
+              <Clock4 className="h-3 w-3" />{" "}
+              {t("common.forecast_refreshed_n_min_ago", { n: 2 })}
             </span>
             <Link href="/copilot" className="ph-btn-primary">
-              Ask Copilot <MessageCircle className="h-4 w-4" />
+              {t("page.today.ask_copilot")} <MessageCircle className="h-4 w-4" />
             </Link>
           </>
         }
@@ -80,31 +80,35 @@ export default function TodayPlanPage() {
 
       <DemoBanner />
 
-      {/* HERO — the headline */}
       <section className="ph-card p-6 md:p-8 mb-6 relative overflow-hidden">
         <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-ph-red/5" />
         <div className="absolute right-10 bottom-0 h-32 w-32 rounded-full bg-ph-yellow/10" />
         <div className="relative grid md:grid-cols-3 gap-6 items-center">
           <div className="md:col-span-2">
             <div className="ph-label flex items-center gap-1.5 text-ph-red">
-              <Flame className="h-3.5 w-3.5" /> Today's forecast
+              <Flame className="h-3.5 w-3.5" /> {t("page.today.hero_label")}
             </div>
             <h2 className="text-[40px] md:text-[56px] leading-[1.05] font-extrabold text-ph-black mt-1">
-              Demand{" "}
-              <span className="text-ph-red">
-                {pctText}
-              </span>{" "}
-              vs typical {weekday}
+              {t("page.today.hero_headline", { pct: pctText, weekday })
+                .split(pctText)
+                .flatMap((part, i, arr) =>
+                  i < arr.length - 1
+                    ? [part, <span key={i} className="text-ph-red">{pctText}</span>]
+                    : [part],
+                )}
             </h2>
             <p className="text-ph-muted mt-2 text-base md:text-lg">
-              {Math.round(bundle.forecast.p50)} orders forecast · {formatGBP(bundle.forecast.revenue)} revenue ·{" "}
-              <span className="font-semibold text-ph-ink">
-                confidence {Math.round((bundle.forecast.p10 / bundle.forecast.p50) * 100)}–{Math.round((bundle.forecast.p90 / bundle.forecast.p50) * 100)}%
-              </span>
+              {t("page.today.hero_sub", {
+                orders: Math.round(bundle.forecast.p50),
+                revenue: formatGBP(bundle.forecast.revenue),
+                band: confidenceBand,
+              })}
               {promo.active && (
                 <>
                   {" · "}
-                  <span className="font-semibold text-ph-red">{promo.name}</span> in play
+                  <span className="font-semibold text-ph-red">
+                    {t("page.today.promo_active", { name: promo.name })}
+                  </span>
                 </>
               )}
               .
@@ -114,38 +118,40 @@ export default function TodayPlanPage() {
           <div className="grid grid-cols-3 md:grid-cols-1 gap-3">
             <StatPill
               icon={<TrendingUp className="h-4 w-4" />}
-              label="Orders (P50)"
+              label={t("page.today.stat_orders")}
               value={formatNumber(Math.round(bundle.forecast.p50))}
-              sub={`${Math.round(bundle.forecast.p10)}–${Math.round(bundle.forecast.p90)} range`}
+              sub={t("page.today.stat_orders_sub", {
+                low: Math.round(bundle.forecast.p10),
+                high: Math.round(bundle.forecast.p90),
+              })}
               tone="red"
             />
             <StatPill
               icon={<AlertTriangle className="h-4 w-4" />}
-              label="Risks at peak"
+              label={t("page.today.stat_risks")}
               value={`${timeline.stockouts.length}`}
-              sub="ingredient stockouts"
+              sub={t("page.today.stat_risks_sub")}
               tone={timeline.stockouts.length ? "amber" : "green"}
             />
             <StatPill
               icon={<Users className="h-4 w-4" />}
-              label="Tasks assigned"
+              label={t("page.today.stat_tasks")}
               value={`${assigned}`}
-              sub={`${Math.min(3, bundle.recs.length) - Math.min(assigned, 3)} of top 3 to go`}
+              sub={t("page.today.stat_tasks_sub", { remaining })}
               tone="default"
             />
           </div>
         </div>
       </section>
 
-      {/* TOP 3 ACTIONS — UC1 "Prepare 120 units of Item A (+25%)" style */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <h2 className="ph-h2 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-ph-red" />
-            Top 3 actions for today
+            {t("page.today.top3_title")}
           </h2>
           <span className="text-xs text-ph-muted">
-            Prioritised by impact × confidence · signal over noise
+            {t("page.today.top3_caption")}
           </span>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -156,7 +162,6 @@ export default function TodayPlanPage() {
       </section>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Specific-time risk feed */}
         <div className="lg:col-span-2">
           <StockoutTimeline
             buckets={timeline.buckets}
@@ -164,30 +169,39 @@ export default function TodayPlanPage() {
           />
         </div>
 
-        {/* Before / After callout */}
         <aside className="space-y-4">
           <BeforeAfterCard />
           <div className="ph-card p-4">
             <h3 className="ph-h2 mb-2 flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-ph-green" /> Why trust this?
+              <ShieldCheck className="h-4 w-4 text-ph-green" />{" "}
+              {t("page.today.trust_title")}
             </h3>
             <ul className="text-sm text-ph-ink space-y-2">
               <li>
-                <span className="font-bold">Explainable:</span> every number cites its drivers (last 3 {weekday}s, active promo, weather).
+                <span className="font-bold">
+                  {t("page.today.trust_explain_bold")}
+                </span>{" "}
+                {t("page.today.trust_explain", { weekday })}
               </li>
               <li>
-                <span className="font-bold">Simulate first:</span> try any change in the Copilot before acting.
+                <span className="font-bold">
+                  {t("page.today.trust_sim_bold")}
+                </span>{" "}
+                {t("page.today.trust_sim")}
               </li>
               <li>
-                <span className="font-bold">Human in control:</span> nothing is executed without you tapping assign.
+                <span className="font-bold">
+                  {t("page.today.trust_human_bold")}
+                </span>{" "}
+                {t("page.today.trust_human")}
               </li>
             </ul>
             <div className="mt-3 flex gap-2">
               <Link href="/copilot" className="ph-btn-primary">
-                Ask the Copilot <ArrowRight className="h-4 w-4" />
+                {t("page.today.ask_copilot")} <ArrowRight className="h-4 w-4" />
               </Link>
               <Link href="/accuracy" className="ph-btn-ghost border border-ph-line">
-                See accuracy
+                {t("page.today.trust_see_accuracy")}
               </Link>
             </div>
           </div>
@@ -231,31 +245,32 @@ function StatPill({
 }
 
 function BeforeAfterCard() {
+  const { t } = useT();
   return (
     <div className="ph-card p-4">
-      <h3 className="ph-h2 mb-3">Before vs after</h3>
+      <h3 className="ph-h2 mb-3">{t("page.today.before_after_title")}</h3>
       <div className="grid grid-cols-2 gap-2 text-sm">
         <div className="rounded-xl border border-ph-line p-3 bg-ph-surface">
-          <div className="ph-chip-muted mb-1.5">Before</div>
+          <div className="ph-chip-muted mb-1.5">{t("page.today.before")}</div>
           <ul className="space-y-1 text-ph-ink">
-            <li>• Guessing prep levels</li>
-            <li>• Firefighting at peak</li>
-            <li>• Stockouts @ lunch</li>
-            <li>• Late deliveries</li>
+            <li>• {t("page.today.before_line1")}</li>
+            <li>• {t("page.today.before_line2")}</li>
+            <li>• {t("page.today.before_line3")}</li>
+            <li>• {t("page.today.before_line4")}</li>
           </ul>
         </div>
         <div className="rounded-xl border border-ph-red/30 p-3 bg-ph-red/5">
-          <div className="ph-chip-red mb-1.5">After</div>
+          <div className="ph-chip-red mb-1.5">{t("page.today.after")}</div>
           <ul className="space-y-1 text-ph-ink">
-            <li>• Forecast + drivers</li>
-            <li>• Top 3, assigned in 2 taps</li>
-            <li>• Risks with clock times</li>
-            <li>• Confident decision</li>
+            <li>• {t("page.today.after_line1")}</li>
+            <li>• {t("page.today.after_line2")}</li>
+            <li>• {t("page.today.after_line3")}</li>
+            <li>• {t("page.today.after_line4")}</li>
           </ul>
         </div>
       </div>
       <p className="text-[11px] text-ph-muted mt-3 italic">
-        "Managers don't need more data — they need better decisions, faster."
+        {t("page.today.quote")}
       </p>
     </div>
   );

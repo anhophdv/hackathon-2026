@@ -20,19 +20,18 @@ import {
   answer,
   CopilotCard,
   CopilotMessage,
+  defaultSuggestionsFor,
   initialCopilotMessages,
-  SUGGESTIONS_DEFAULT,
 } from "@/lib/copilot/engine";
 import { cn } from "@/lib/utils";
 import { SeverityChip } from "@/components/SeverityChip";
+import { useT } from "@/lib/i18n/useT";
 
-// Conversational surface for the Smart Planning Copilot. Grounded in the same
-// forecast/recommendation/timeline engines that power the rest of the app —
-// deterministic core, LLM-style narrative on top, manager always in control.
 export default function CopilotPage() {
   const history = useHistory();
   const whatIf = useAppStore((s) => s.whatIf);
   const today = history.endDate;
+  const { t } = useT();
 
   const ctx = useMemo(
     () => ({ history, targetDate: today, whatIf }),
@@ -62,7 +61,6 @@ export default function CopilotPage() {
     setMessages((m) => [...m, user]);
     setInput("");
     setPending(true);
-    // simulate thinking
     setTimeout(() => {
       const reply = answer(text, ctx);
       setMessages((m) => [...m, reply]);
@@ -72,44 +70,58 @@ export default function CopilotPage() {
 
   const lastSuggested =
     [...messages].reverse().find((m) => m.role === "copilot")?.suggested ??
-    SUGGESTIONS_DEFAULT;
+    defaultSuggestionsFor();
+
+  const tryTheseQs = [
+    t("copilot.sugg.biggest_risk"),
+    t("copilot.sugg.why_demand"),
+    t("copilot.sugg.whatif_prep"),
+    t("copilot.sugg.when_dough"),
+    t("copilot.sugg.whatif_rain"),
+    t("copilot.sugg.compare_friday"),
+    t("copilot.sugg.accuracy_history"),
+  ];
+
+  const confidenceLabel = t("common.confidence");
 
   return (
     <>
       <PageHeader
-        title="Smart Planning Copilot"
-        subtitle="Ask anything about today: demand, risks, what-ifs. Every answer cites drivers and confidence. You stay in control."
+        title={t("page.copilot.title")}
+        subtitle={t("page.copilot.subtitle")}
         right={
           <>
             <span className="ph-chip-muted">
-              <ShieldCheck className="h-3 w-3" /> Grounded in today's forecast
+              <ShieldCheck className="h-3 w-3" /> {t("page.copilot.grounded_chip")}
             </span>
             <Link href="/today" className="ph-btn-ghost border border-ph-line">
-              Open Today's Plan <ArrowRight className="h-4 w-4" />
+              {t("page.copilot.open_today")} <ArrowRight className="h-4 w-4" />
             </Link>
           </>
         }
       />
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-        {/* Chat column */}
         <div className="ph-card flex flex-col min-h-[620px] h-[75vh]">
           <div className="flex items-center gap-2 px-4 py-3 border-b border-ph-line">
             <div className="rounded-lg bg-ph-red text-white p-1.5">
               <Bot className="h-4 w-4" />
             </div>
             <div>
-              <div className="font-bold text-ph-black text-sm">Copilot</div>
+              <div className="font-bold text-ph-black text-sm">{t("sidenav.copilot")}</div>
               <div className="text-[11px] text-ph-green flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-ph-green" /> Online · deterministic engine
+                <span className="h-1.5 w-1.5 rounded-full bg-ph-green" />{" "}
+                {t("page.copilot.online")}
               </div>
             </div>
-            <span className="ml-auto ph-chip-muted">Session 1</span>
+            <span className="ml-auto ph-chip-muted">
+              {t("page.copilot.session")}
+            </span>
           </div>
 
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
             {messages.map((m) => (
-              <Bubble key={m.id} msg={m} />
+              <Bubble key={m.id} msg={m} confidenceLabel={confidenceLabel} />
             ))}
             {pending && (
               <div className="flex items-end gap-2">
@@ -127,7 +139,6 @@ export default function CopilotPage() {
             )}
           </div>
 
-          {/* Suggestion chips */}
           <div className="px-4 pt-1 pb-2 border-t border-ph-line flex flex-wrap gap-1.5">
             {lastSuggested.slice(0, 5).map((s) => (
               <button
@@ -141,7 +152,6 @@ export default function CopilotPage() {
             ))}
           </div>
 
-          {/* Input */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -154,7 +164,7 @@ export default function CopilotPage() {
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder='Ask something like "What if I reduce prep by 20%?"'
+                placeholder={t("page.copilot.placeholder")}
                 className="bg-transparent outline-none flex-1 text-sm"
                 disabled={pending}
               />
@@ -167,36 +177,29 @@ export default function CopilotPage() {
                 (pending || !input.trim()) && "opacity-50 cursor-not-allowed",
               )}
             >
-              <Send className="h-4 w-4" /> Send
+              <Send className="h-4 w-4" /> {t("common.send")}
             </button>
           </form>
         </div>
 
-        {/* Side panel */}
         <aside className="space-y-4">
           <div className="ph-card p-4">
             <h3 className="ph-h2 mb-2 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-ph-red" /> Core positioning
+              <Sparkles className="h-4 w-4 text-ph-red" />{" "}
+              {t("page.copilot.sidepanel.positioning_title")}
             </h3>
-            <p className="text-sm text-ph-ink leading-relaxed">
-              "We're not building a dashboard — we're building a system that turns
-              data into <strong>timely, confident decisions</strong>, enabling managers to operate
-              proactively instead of reactively."
-            </p>
+            <p
+              className="text-sm text-ph-ink leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: t("page.copilot.sidepanel.positioning"),
+              }}
+            />
           </div>
 
           <div className="ph-card p-4">
-            <h3 className="ph-h2 mb-2">Try these</h3>
+            <h3 className="ph-h2 mb-2">{t("page.copilot.sidepanel.try_these")}</h3>
             <ul className="space-y-1.5">
-              {[
-                "What's my biggest risk today?",
-                "Why is demand higher than usual?",
-                "What if I reduce prep by 20%?",
-                "When will we run out of dough?",
-                "What if it rains tonight?",
-                "Compare vs last Friday",
-                "How confident are you?",
-              ].map((q) => (
+              {tryTheseQs.map((q) => (
                 <li key={q}>
                   <button
                     onClick={() => send(q)}
@@ -213,17 +216,27 @@ export default function CopilotPage() {
 
           <div className="ph-card p-4">
             <h3 className="ph-h2 mb-2 flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-ph-green" /> How this is grounded
+              <ShieldCheck className="h-4 w-4 text-ph-green" />{" "}
+              {t("page.copilot.sidepanel.grounded_title")}
             </h3>
             <ul className="text-sm text-ph-ink space-y-2">
               <li>
-                <span className="font-bold">Deterministic core:</span> decisions come from the same forecast + BOM + capacity engine as the rest of the app.
+                <span className="font-bold">
+                  {t("page.copilot.sidepanel.grounded_core")}
+                </span>{" "}
+                {t("page.copilot.sidepanel.grounded_core_body")}
               </li>
               <li>
-                <span className="font-bold">LLM-style narrative:</span> the Copilot explains, it doesn't override.
+                <span className="font-bold">
+                  {t("page.copilot.sidepanel.grounded_llm")}
+                </span>{" "}
+                {t("page.copilot.sidepanel.grounded_llm_body")}
               </li>
               <li>
-                <span className="font-bold">Human in control:</span> every action is opt-in, never auto-executed.
+                <span className="font-bold">
+                  {t("page.copilot.sidepanel.grounded_human")}
+                </span>{" "}
+                {t("page.copilot.sidepanel.grounded_human_body")}
               </li>
             </ul>
           </div>
@@ -233,7 +246,13 @@ export default function CopilotPage() {
   );
 }
 
-function Bubble({ msg }: { msg: CopilotMessage }) {
+function Bubble({
+  msg,
+  confidenceLabel,
+}: {
+  msg: CopilotMessage;
+  confidenceLabel: string;
+}) {
   const isUser = msg.role === "user";
   return (
     <div className={cn("flex items-end gap-2", isUser ? "justify-end" : "")}>
@@ -271,7 +290,7 @@ function Bubble({ msg }: { msg: CopilotMessage }) {
           <div className="mt-3 pt-2 border-t border-ph-line/70 flex flex-wrap items-center gap-2 text-[11px]">
             {msg.confidence != null && (
               <span className="ph-chip-muted">
-                Confidence {Math.round(msg.confidence * 100)}%
+                {confidenceLabel} {Math.round(msg.confidence * 100)}%
               </span>
             )}
             {msg.citations?.map((c, i) =>
@@ -307,7 +326,7 @@ function InlineCard({ card }: { card: CopilotCard }) {
       <div className="flex items-center gap-2 p-2 rounded-lg bg-white border border-ph-line">
         <SeverityChip severity={card.severity} />
         <span className="text-xs font-semibold text-ph-ink flex-1">{card.title}</span>
-        <Link href="/today" className="text-[11px] font-bold text-ph-red">Open →</Link>
+        <Link href="/today" className="text-[11px] font-bold text-ph-red">→</Link>
       </div>
     );
   }

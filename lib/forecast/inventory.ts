@@ -1,6 +1,7 @@
 import { IngredientId, MENU } from "../mock/menu";
 import { STOCK, STOCK_BY_ID } from "../mock/inventory";
 import { DayForecast } from "./engine";
+import { translate } from "../i18n/messages";
 
 export type IngredientNeed = {
   id: IngredientId;
@@ -87,7 +88,8 @@ export type PrepTask = {
   label: string;
   qty: number;
   unit: string;
-  doBy: string; // e.g. "before 17:00"
+  doBy: string; // e.g. "before 17:00" / "trước 17:00"
+  at: string; // e.g. "17:00"
   reason: string;
 };
 
@@ -95,52 +97,69 @@ export type PrepTask = {
 export function buildPrepPlan(forecast: DayForecast): PrepTask[] {
   const e = explodeBom(forecast.perSku);
   const tasks: PrepTask[] = [];
+  const tr = (k: string, v?: Record<string, string | number>) =>
+    translate(k, v);
 
   const doughLarge = Math.round(e.dough_large ?? 0);
   const doughMedium = Math.round(e.dough_medium ?? 0);
-  if (doughLarge > 0) {
+  const pushTask = (
+    id: string,
+    labelKey: string,
+    qty: number,
+    unitKey: string,
+    time: string,
+    reasonKey: string,
+  ) => {
     tasks.push({
-      id: "prep_dough_l",
-      label: "Prep large dough balls",
-      qty: doughLarge,
-      unit: "balls",
-      doBy: "before 16:00",
-      reason: "Cold-proof needs 2-3h before evening peak (18:00-21:00)",
+      id,
+      label: tr(labelKey),
+      qty,
+      unit: tr(unitKey),
+      at: time,
+      doBy: tr("prep.before", { time }),
+      reason: tr(reasonKey),
     });
-  }
-  if (doughMedium > 0) {
-    tasks.push({
-      id: "prep_dough_m",
-      label: "Prep medium dough balls",
-      qty: doughMedium,
-      unit: "balls",
-      doBy: "before 16:00",
-      reason: "Cold-proof needs 2-3h before evening peak",
-    });
-  }
+  };
+
+  if (doughLarge > 0)
+    pushTask(
+      "prep_dough_l",
+      "prep.dough_large",
+      doughLarge,
+      "prep.unit_balls",
+      "16:00",
+      "prep.reason_dough",
+    );
+  if (doughMedium > 0)
+    pushTask(
+      "prep_dough_m",
+      "prep.dough_medium",
+      doughMedium,
+      "prep.unit_balls",
+      "16:00",
+      "prep.reason_dough_m",
+    );
 
   const cheese = Math.round((e.mozzarella_g ?? 0) / 1000);
-  if (cheese > 0) {
-    tasks.push({
-      id: "prep_cheese",
-      label: "Pre-shred mozzarella",
-      qty: cheese,
-      unit: "kg",
-      doBy: "before 17:00",
-      reason: "Make-line consumes ~22 pizzas/staff/hour at peak",
-    });
-  }
+  if (cheese > 0)
+    pushTask(
+      "prep_cheese",
+      "prep.cheese",
+      cheese,
+      "prep.unit_kg",
+      "17:00",
+      "prep.reason_cheese",
+    );
 
   const wings = Math.round(e.wing_pieces ?? 0);
-  if (wings > 0) {
-    tasks.push({
-      id: "prep_wings",
-      label: "Marinate wings",
-      qty: wings,
-      unit: "pcs",
-      doBy: "before 16:00",
-      reason: "30 min marinade + holding",
-    });
-  }
+  if (wings > 0)
+    pushTask(
+      "prep_wings",
+      "prep.wings",
+      wings,
+      "prep.unit_pcs",
+      "16:00",
+      "prep.reason_wings",
+    );
   return tasks;
 }

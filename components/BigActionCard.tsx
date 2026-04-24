@@ -18,6 +18,7 @@ import {
 import { useAppStore } from "@/lib/state/store";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n/useT";
 
 const CATEGORY_ICON: Record<Recommendation["category"], any> = {
   Inventory: Package,
@@ -45,6 +46,7 @@ export function BigActionCard({
   );
   const [showWhy, setShowWhy] = useState(false);
   const firstStep = rec.steps[0];
+  const { t } = useT();
 
   return (
     <div className="ph-card p-5 md:p-6 flex flex-col gap-4 relative overflow-hidden">
@@ -58,9 +60,9 @@ export function BigActionCard({
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <SeverityChip severity={rec.severity} />
-            <span className="ph-chip-muted">{rec.category}</span>
+            <span className="ph-chip-muted">{t(`category.${rec.category}`)}</span>
             <span className="text-[11px] text-ph-muted ml-auto">
-              Confidence {Math.round(rec.confidence * 100)}%
+              {t("rec.confidence", { pct: Math.round(rec.confidence * 100) })}
             </span>
           </div>
           <h3 className="text-[17px] md:text-xl font-extrabold text-ph-black leading-tight">
@@ -69,9 +71,11 @@ export function BigActionCard({
           {firstStep && (
             <p className="text-sm text-ph-muted mt-1.5 flex items-center gap-1.5">
               <Clock4 className="h-3.5 w-3.5" />
-              <span className="font-semibold text-ph-ink">By {firstStep.at}</span>
+              <span className="font-semibold text-ph-ink">
+                {t("common.by_time", { time: firstStep.at })}
+              </span>
               {" · "}
-              Owner {firstStep.owner ?? "Manager"}
+              {t("common.owner")} {t(`owner.${firstStep.owner ?? "Manager"}`)}
             </p>
           )}
         </div>
@@ -83,7 +87,7 @@ export function BigActionCard({
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-ph-red hover:underline"
         >
           <MessageCircleQuestion className="h-4 w-4" />
-          {showWhy ? "Hide why" : "Why?"}
+          {showWhy ? t("rec.hide_why") : t("rec.why")}
         </button>
         <button
           onClick={() => addTask(rec)}
@@ -95,11 +99,11 @@ export function BigActionCard({
         >
           {created ? (
             <>
-              <CheckCircle2 className="h-4 w-4" /> Assigned
+              <CheckCircle2 className="h-4 w-4" /> {t("rec.assigned")}
             </>
           ) : (
             <>
-              <PlusCircle className="h-4 w-4" /> Assign as task
+              <PlusCircle className="h-4 w-4" /> {t("rec.assign")}
             </>
           )}
         </button>
@@ -108,11 +112,11 @@ export function BigActionCard({
       {showWhy && (
         <div className="pl-12 grid md:grid-cols-2 gap-3 border-t border-ph-line pt-3">
           <div>
-            <div className="ph-label mb-1">Why it matters</div>
+            <div className="ph-label mb-1">{t("rec.why_matters")}</div>
             <p className="text-sm text-ph-ink">{rec.whyItMatters}</p>
           </div>
           <div>
-            <div className="ph-label mb-1">Drivers</div>
+            <div className="ph-label mb-1">{t("rec.drivers")}</div>
             <ul className="text-sm text-ph-ink space-y-1">
               {rec.drivers.slice(0, 4).map((d, i) => (
                 <li key={i} className="flex items-start gap-2">
@@ -123,7 +127,7 @@ export function BigActionCard({
             </ul>
           </div>
           <div className="md:col-span-2">
-            <div className="ph-label mb-1">Executable plan</div>
+            <div className="ph-label mb-1">{t("rec.plan")}</div>
             <ol className="space-y-1.5">
               {rec.steps.map((s, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm">
@@ -138,13 +142,15 @@ export function BigActionCard({
                       </span>
                     )}
                   </span>
-                  {s.owner && <span className="ph-chip-muted">{s.owner}</span>}
+                  {s.owner && (
+                    <span className="ph-chip-muted">{t(`owner.${s.owner}`)}</span>
+                  )}
                 </li>
               ))}
             </ol>
             <p className="text-xs text-ph-muted mt-2 flex items-center gap-1.5">
               <Target className="h-3.5 w-3.5 text-ph-green" />
-              <span className="font-semibold text-ph-green">Impact:</span>{" "}
+              <span className="font-semibold text-ph-green">{t("rec.impact")}</span>{" "}
               {rec.expectedImpact}
             </p>
           </div>

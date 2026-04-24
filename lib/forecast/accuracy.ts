@@ -2,6 +2,8 @@ import { GeneratedHistory } from "../mock/orders";
 import { addDays, startOfDay } from "../utils";
 import { forecastDay } from "./engine";
 
+const INTL_LOCALE = "en-GB";
+
 export type AccuracyPoint = {
   date: Date;
   label: string;
@@ -34,7 +36,7 @@ export function walkForwardAccuracy(
     if (!actual) continue;
     out.push({
       date: target,
-      label: target.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" }),
+      label: target.toLocaleDateString(INTL_LOCALE, { weekday: "short", day: "2-digit", month: "short" }),
       actualOrders: actual.orders.length,
       actualRevenue: actual.revenue,
       predOrders: Math.round(f.p50),
@@ -86,7 +88,7 @@ export function weekOverWeek(history: GeneratedHistory) {
     history.days.find((d) => d.date.getTime() === addDays(end, -13 + i).getTime()),
   );
   return thisWeek.map((d, i) => ({
-    label: d?.date.toLocaleDateString("en-GB", { weekday: "short" }) ?? "",
+    label: d?.date.toLocaleDateString(INTL_LOCALE, { weekday: "short" }) ?? "",
     thisWeek: d?.orders.length ?? 0,
     lastWeek: lastWeek[i]?.orders.length ?? 0,
     thisRev: d?.revenue ?? 0,

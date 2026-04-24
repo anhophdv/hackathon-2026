@@ -3,6 +3,7 @@
 import { IngredientNeed } from "@/lib/forecast/inventory";
 import { formatGBP, formatNumber } from "@/lib/utils";
 import { Package, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { useT } from "@/lib/i18n/useT";
 
 const RISK_TONE: Record<IngredientNeed["riskLevel"], string> = {
   high: "bg-ph-red/10 text-ph-red",
@@ -12,20 +13,21 @@ const RISK_TONE: Record<IngredientNeed["riskLevel"], string> = {
 };
 
 export function InventoryTable({ rows }: { rows: IngredientNeed[] }) {
+  const { t } = useT();
   return (
     <div className="ph-card overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-ph-surface text-ph-muted">
             <tr className="text-left">
-              <th className="px-4 py-2 font-semibold">Ingredient</th>
-              <th className="px-3 py-2 font-semibold text-right">Required</th>
-              <th className="px-3 py-2 font-semibold text-right">On hand</th>
-              <th className="px-3 py-2 font-semibold text-right">Shortfall</th>
-              <th className="px-3 py-2 font-semibold text-right">Order (packs)</th>
-              <th className="px-3 py-2 font-semibold text-right">Est. cost</th>
-              <th className="px-3 py-2 font-semibold">Cutoff</th>
-              <th className="px-3 py-2 font-semibold">Status</th>
+              <th className="px-4 py-2 font-semibold">{t("inv.col_ingredient")}</th>
+              <th className="px-3 py-2 font-semibold text-right">{t("inv.col_required")}</th>
+              <th className="px-3 py-2 font-semibold text-right">{t("inv.col_onhand")}</th>
+              <th className="px-3 py-2 font-semibold text-right">{t("inv.col_shortfall")}</th>
+              <th className="px-3 py-2 font-semibold text-right">{t("inv.col_packs")}</th>
+              <th className="px-3 py-2 font-semibold text-right">{t("inv.col_cost")}</th>
+              <th className="px-3 py-2 font-semibold">{t("inv.col_cutoff")}</th>
+              <th className="px-3 py-2 font-semibold">{t("inv.col_status")}</th>
             </tr>
           </thead>
           <tbody>
@@ -34,7 +36,7 @@ export function InventoryTable({ rows }: { rows: IngredientNeed[] }) {
                 <td className="px-4 py-2.5 font-semibold text-ph-black">
                   <div className="flex items-center gap-2">
                     <Package className="h-3.5 w-3.5 text-ph-muted" />
-                    {r.label}
+                    {t(`ingredient.${r.id}`)}
                   </div>
                 </td>
                 <td className="px-3 py-2.5 text-right tabular-nums">
@@ -59,7 +61,10 @@ export function InventoryTable({ rows }: { rows: IngredientNeed[] }) {
                   {r.estCost > 0 ? formatGBP(r.estCost) : "—"}
                 </td>
                 <td className="px-3 py-2.5 text-ph-ink">
-                  {String(r.cutoffHour).padStart(2, "0")}:00 · LT {r.leadTimeHrs}h
+                  {t("inv.cutoff_line", {
+                    hour: String(r.cutoffHour).padStart(2, "0"),
+                    lead: r.leadTimeHrs,
+                  })}
                 </td>
                 <td className="px-3 py-2.5">
                   <span
@@ -70,7 +75,11 @@ export function InventoryTable({ rows }: { rows: IngredientNeed[] }) {
                     ) : (
                       <AlertTriangle className="h-3 w-3" />
                     )}
-                    {r.riskLevel === "ok" ? "Healthy" : `${r.riskLevel.toUpperCase()} risk`}
+                    {r.riskLevel === "ok"
+                      ? t("inv.status_healthy")
+                      : t("inv.status_risk", {
+                          level: t(`severity.${r.riskLevel}`),
+                        })}
                   </span>
                 </td>
               </tr>

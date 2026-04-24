@@ -1,5 +1,8 @@
+"use client";
+
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n/useT";
 
 export function FreshnessBadge({
   mins,
@@ -8,6 +11,7 @@ export function FreshnessBadge({
   mins: number;
   className?: string;
 }) {
+  const { t } = useT();
   const tone =
     mins <= 5
       ? "bg-ph-green/10 text-ph-green"
@@ -21,10 +25,10 @@ export function FreshnessBadge({
         tone,
         className,
       )}
-      title={`Updated ${mins} min ago`}
+      title={t("common.updated_n_min_ago", { n: mins })}
     >
       <Clock className="h-3 w-3" />
-      {mins} min
+      {t("common.min_short", { n: mins })}
     </span>
   );
 }

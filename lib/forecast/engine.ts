@@ -4,6 +4,7 @@ import {
   promoForDate,
 } from "../mock/orders";
 import { addDays, isWeekend, startOfDay } from "../utils";
+import { translate } from "../i18n/messages";
 
 export type Weather = "sunny" | "cloudy" | "rainy" | "cold" | "hot";
 export type LocalEvent = "none" | "match" | "holiday" | "school_break";
@@ -83,6 +84,8 @@ export function forecastDay(input: ForecastInput): DayForecast {
   const { history, date } = input;
   const wi: WhatIf = { ...DEFAULT_WHATIF, ...(input.whatIf ?? {}) };
   const weekday = date.getDay();
+  const tr = (k: string, v?: Record<string, string | number>) =>
+    translate(k, v);
 
   // baseline = trimmed mean of same-weekday orders in history
   const sameWeekday = history.days.filter((d) => d.date.getDay() === weekday);
@@ -93,7 +96,7 @@ export function forecastDay(input: ForecastInput): DayForecast {
   // weekday already in baseline; track for transparency
   const weekdayMult = 1.0;
   drivers.push({
-    label: `Same-weekday baseline (${baselineOrders.toFixed(0)} orders)`,
+    label: tr("driver.baseline", { n: baselineOrders.toFixed(0) }),
     delta: 0,
     kind: "weekday",
   });
@@ -103,7 +106,7 @@ export function forecastDay(input: ForecastInput): DayForecast {
   const naturalPromoMult = input.applyNaturalPromo === false ? 1 : promo.demandMult;
   if (naturalPromoMult !== 1) {
     drivers.push({
-      label: promo.name ?? "Promotion active",
+      label: promo.name ?? tr("driver.promo_active"),
       delta: naturalPromoMult - 1,
       kind: "promo",
     });
@@ -113,7 +116,10 @@ export function forecastDay(input: ForecastInput): DayForecast {
   const userPromo = 1 + wi.promoUpliftPct / 100;
   if (wi.promoUpliftPct !== 0) {
     drivers.push({
-      label: `Promo uplift ${wi.promoUpliftPct > 0 ? "+" : ""}${wi.promoUpliftPct}%`,
+      label: tr("driver.promo_uplift", {
+        sign: wi.promoUpliftPct > 0 ? "+" : "",
+        pct: wi.promoUpliftPct,
+      }),
       delta: userPromo - 1,
       kind: "promo",
     });
@@ -122,7 +128,9 @@ export function forecastDay(input: ForecastInput): DayForecast {
   const wMult = WEATHER_MULT[wi.weather];
   if (wMult !== 1) {
     drivers.push({
-      label: `Weather: ${wi.weather}`,
+      label: tr("driver.weather", {
+        w: translate(`whatif.weather.${wi.weather}`),
+      }),
       delta: wMult - 1,
       kind: "weather",
     });
@@ -130,7 +138,9 @@ export function forecastDay(input: ForecastInput): DayForecast {
   const eMult = EVENT_MULT[wi.event];
   if (eMult !== 1) {
     drivers.push({
-      label: `Local event: ${wi.event.replace("_", " ")}`,
+      label: tr("driver.event", {
+        e: translate(`whatif.event.${wi.event}`),
+      }),
       delta: eMult - 1,
       kind: "event",
     });
@@ -138,7 +148,7 @@ export function forecastDay(input: ForecastInput): DayForecast {
   const mMult = 1 + wi.marketingPushPct / 100 * 0.4; // marketing has 40% conversion
   if (wi.marketingPushPct > 0) {
     drivers.push({
-      label: `Marketing push +${wi.marketingPushPct}%`,
+      label: tr("driver.marketing", { pct: wi.marketingPushPct }),
       delta: mMult - 1,
       kind: "marketing",
     });
@@ -146,7 +156,10 @@ export function forecastDay(input: ForecastInput): DayForecast {
   const priceMult = 1 + (wi.pricePct / 100) * PRICE_ELASTICITY;
   if (wi.pricePct !== 0) {
     drivers.push({
-      label: `Price ${wi.pricePct > 0 ? "+" : ""}${wi.pricePct}%`,
+      label: tr("driver.price", {
+        sign: wi.pricePct > 0 ? "+" : "",
+        pct: wi.pricePct,
+      }),
       delta: priceMult - 1,
       kind: "price",
     });

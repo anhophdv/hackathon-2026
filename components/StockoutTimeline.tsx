@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import { AlertTriangle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n/useT";
 
 // Hour-by-hour demand with stockout markers — makes "Risk at 12:45 PM" tangible.
 export function StockoutTimeline({
@@ -24,6 +25,7 @@ export function StockoutTimeline({
   buckets: TimelineBucket[];
   stockouts: StockoutEvent[];
 }) {
+  const { t } = useT();
   const data = buckets.map((b) => ({
     hour: b.clock.replace(":00 ", " "),
     raw: b.hour,
@@ -37,14 +39,19 @@ export function StockoutTimeline({
         <div>
           <h3 className="ph-h2 flex items-center gap-2">
             <Clock className="h-4 w-4 text-ph-red" />
-            Stockout timeline
+            {t("timeline.title")}
           </h3>
           <p className="text-xs text-ph-muted mt-0.5">
-            Hour-by-hour demand vs on-hand. Red bars mark the hour where an ingredient depletes.
+            {t("timeline.caption")}
           </p>
         </div>
         <span className="ph-chip-muted">
-          {stockouts.length} projected risk{stockouts.length === 1 ? "" : "s"}
+          {t(
+            stockouts.length === 1
+              ? "timeline.risk_count_one"
+              : "timeline.risk_count_other",
+            { n: stockouts.length },
+          )}
         </span>
       </div>
 
@@ -73,7 +80,7 @@ export function StockoutTimeline({
                 border: `1px solid ${CHART.grid}`,
                 fontSize: 12,
               }}
-              labelFormatter={(l) => `Hour ${l}`}
+              labelFormatter={(l) => t("timeline.hour_label", { h: l })}
             />
             <Bar dataKey="orders" radius={[6, 6, 0, 0]}>
               {data.map((d, i) => (
@@ -109,12 +116,19 @@ export function StockoutTimeline({
               <AlertTriangle className="h-4 w-4 text-ph-red mt-0.5 shrink-0" />
               <div className="flex-1 text-sm">
                 <div className="font-bold text-ph-black">
-                  {s.label} runs out at{" "}
+                  {t("timeline.runs_out_at", { label: s.label })}{" "}
                   <span className="text-ph-red">{s.clock}</span>
                 </div>
                 <div className="text-xs text-ph-muted mt-0.5">
-                  On-hand {s.onHand} {s.unit} · burn {s.hourlyBurn} {s.unit}/hr · impacts{" "}
-                  {s.impactedSkus.map((x) => x.name).slice(0, 2).join(", ")}
+                  {t("timeline.detail", {
+                    onHand: s.onHand,
+                    unit: s.unit,
+                    burn: s.hourlyBurn,
+                    impacts: s.impactedSkus
+                      .map((x) => x.name)
+                      .slice(0, 2)
+                      .join(", "),
+                  })}
                 </div>
               </div>
               <span
@@ -127,7 +141,7 @@ export function StockoutTimeline({
                     : "bg-ph-green/10 text-ph-green",
                 )}
               >
-                {s.severity.toUpperCase()}
+                {t(`severity.${s.severity}`)}
               </span>
             </div>
           ))}

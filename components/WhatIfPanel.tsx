@@ -1,23 +1,24 @@
 "use client";
 
-import { LocalEvent, Weather, WhatIf } from "@/lib/forecast/engine";
+import { LocalEvent, Weather } from "@/lib/forecast/engine";
 import { useAppStore } from "@/lib/state/store";
 import { CloudRain, Save, RotateCcw, Sun, Snowflake, Cloud, Flame } from "lucide-react";
 import { useState } from "react";
+import { useT } from "@/lib/i18n/useT";
 
-const WEATHER_OPTIONS: { v: Weather; label: string; Icon: any }[] = [
-  { v: "sunny", label: "Sunny", Icon: Sun },
-  { v: "cloudy", label: "Cloudy", Icon: Cloud },
-  { v: "rainy", label: "Rainy", Icon: CloudRain },
-  { v: "cold", label: "Cold", Icon: Snowflake },
-  { v: "hot", label: "Hot", Icon: Flame },
+const WEATHER_OPTIONS: { v: Weather; key: string; Icon: any }[] = [
+  { v: "sunny", key: "whatif.weather.sunny", Icon: Sun },
+  { v: "cloudy", key: "whatif.weather.cloudy", Icon: Cloud },
+  { v: "rainy", key: "whatif.weather.rainy", Icon: CloudRain },
+  { v: "cold", key: "whatif.weather.cold", Icon: Snowflake },
+  { v: "hot", key: "whatif.weather.hot", Icon: Flame },
 ];
 
-const EVENT_OPTIONS: { v: LocalEvent; label: string }[] = [
-  { v: "none", label: "No event" },
-  { v: "match", label: "Football match" },
-  { v: "holiday", label: "Bank holiday" },
-  { v: "school_break", label: "School break" },
+const EVENT_OPTIONS: { v: LocalEvent; key: string }[] = [
+  { v: "none", key: "whatif.event.none" },
+  { v: "match", key: "whatif.event.match" },
+  { v: "holiday", key: "whatif.event.holiday" },
+  { v: "school_break", key: "whatif.event.school_break" },
 ];
 
 export function WhatIfPanel() {
@@ -29,11 +30,12 @@ export function WhatIfPanel() {
   const load = useAppStore((s) => s.loadScenario);
   const del = useAppStore((s) => s.deleteScenario);
   const [name, setName] = useState("");
+  const { t } = useT();
 
   return (
     <div className="ph-card p-5 space-y-5">
       <div>
-        <div className="ph-label mb-2">Weather</div>
+        <div className="ph-label mb-2">{t("whatif.weather")}</div>
         <div className="flex flex-wrap gap-2">
           {WEATHER_OPTIONS.map((o) => (
             <button
@@ -46,14 +48,14 @@ export function WhatIfPanel() {
               }`}
             >
               <o.Icon className="h-3.5 w-3.5" />
-              {o.label}
+              {t(o.key)}
             </button>
           ))}
         </div>
       </div>
 
       <div>
-        <div className="ph-label mb-2">Local event</div>
+        <div className="ph-label mb-2">{t("whatif.event")}</div>
         <div className="flex flex-wrap gap-2">
           {EVENT_OPTIONS.map((o) => (
             <button
@@ -65,7 +67,7 @@ export function WhatIfPanel() {
                   : "bg-white text-ph-ink border-ph-line hover:border-ph-black"
               }`}
             >
-              {o.label}
+              {t(o.key)}
             </button>
           ))}
         </div>
@@ -73,7 +75,7 @@ export function WhatIfPanel() {
 
       <div>
         <div className="flex items-center justify-between">
-          <div className="ph-label">Promo uplift</div>
+          <div className="ph-label">{t("whatif.promo_uplift")}</div>
           <div className="text-sm font-bold text-ph-red">
             {whatIf.promoUpliftPct > 0 ? "+" : ""}
             {whatIf.promoUpliftPct}%
@@ -94,7 +96,7 @@ export function WhatIfPanel() {
 
       <div>
         <div className="flex items-center justify-between">
-          <div className="ph-label">Marketing push</div>
+          <div className="ph-label">{t("whatif.marketing_push")}</div>
           <div className="text-sm font-bold text-ph-red">+{whatIf.marketingPushPct}%</div>
         </div>
         <input
@@ -112,7 +114,7 @@ export function WhatIfPanel() {
 
       <div>
         <div className="flex items-center justify-between">
-          <div className="ph-label">Price change</div>
+          <div className="ph-label">{t("whatif.price_change")}</div>
           <div className="text-sm font-bold text-ph-red">
             {whatIf.pricePct > 0 ? "+" : ""}
             {whatIf.pricePct}%
@@ -134,7 +136,7 @@ export function WhatIfPanel() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Scenario name e.g. 'Sat + match'"
+            placeholder={t("whatif.scenario_placeholder")}
             className="flex-1 text-sm border border-ph-line rounded-xl px-3 py-2 outline-none focus:border-ph-red"
           />
           <button
@@ -145,15 +147,15 @@ export function WhatIfPanel() {
             }}
             className="ph-btn-primary disabled:opacity-50"
           >
-            <Save className="h-4 w-4" /> Save
+            <Save className="h-4 w-4" /> {t("common.save")}
           </button>
           <button onClick={reset} className="ph-btn-ghost border border-ph-line">
-            <RotateCcw className="h-4 w-4" /> Reset
+            <RotateCcw className="h-4 w-4" /> {t("common.reset")}
           </button>
         </div>
         {scenarios.length > 0 && (
           <div className="space-y-1.5">
-            <div className="ph-label">Saved scenarios</div>
+            <div className="ph-label">{t("whatif.saved_scenarios")}</div>
             {scenarios.map((sc) => (
               <div
                 key={sc.id}
@@ -166,14 +168,16 @@ export function WhatIfPanel() {
                   {sc.name}
                 </button>
                 <span className="text-[11px] text-ph-muted">
-                  {sc.whatIf.weather} · {sc.whatIf.event} · {sc.whatIf.promoUpliftPct >= 0 ? "+" : ""}
-                  {sc.whatIf.promoUpliftPct}% promo
+                  {t(`whatif.weather.${sc.whatIf.weather}`)} ·{" "}
+                  {t(`whatif.event.${sc.whatIf.event}`)} ·{" "}
+                  {sc.whatIf.promoUpliftPct >= 0 ? "+" : ""}
+                  {sc.whatIf.promoUpliftPct}%
                 </span>
                 <button
                   onClick={() => del(sc.id)}
                   className="text-xs text-ph-muted hover:text-ph-red"
                 >
-                  Remove
+                  {t("common.remove")}
                 </button>
               </div>
             ))}

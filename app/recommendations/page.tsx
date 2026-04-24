@@ -7,6 +7,7 @@ import { buildRecommendations, Recommendation } from "@/lib/forecast/recommendat
 import { useAppStore } from "@/lib/state/store";
 import { addDays, ddmm } from "@/lib/utils";
 import { RecommendationCard } from "@/components/RecommendationCard";
+import { useT } from "@/lib/i18n/useT";
 
 const CATEGORIES: Recommendation["category"][] = [
   "Inventory",
@@ -26,6 +27,7 @@ export default function RecommendationsPage() {
   const [activeSev, setActiveSev] = useState<Set<string>>(
     new Set(["high", "med", "low"]),
   );
+  const { t } = useT();
 
   const target = addDays(history.endDate, dayOffset);
   const bundle = useMemo(
@@ -47,8 +49,8 @@ export default function RecommendationsPage() {
   return (
     <>
       <PageHeader
-        title="Recommendations"
-        subtitle="Each recommendation explains why it matters, the drivers behind it, and a concrete plan with owners, times and quantities. One click turns it into a tracked task."
+        title={t("page.recs.title")}
+        subtitle={t("page.recs.subtitle")}
         right={
           <div className="ph-card p-1 flex">
             {[0, 1, 2, 3].map((d) => (
@@ -59,7 +61,11 @@ export default function RecommendationsPage() {
                   dayOffset === d ? "bg-ph-red text-white" : "text-ph-ink hover:bg-ph-line"
                 }`}
               >
-                {d === 0 ? "Today" : d === 1 ? "Tomorrow" : ddmm(addDays(history.endDate, d))}
+                {d === 0
+                  ? t("page.recs.today")
+                  : d === 1
+                    ? t("page.recs.tomorrow")
+                    : ddmm(addDays(history.endDate, d))}
               </button>
             ))}
           </div>
@@ -67,7 +73,7 @@ export default function RecommendationsPage() {
       />
 
       <div className="ph-card p-3 mb-5 flex flex-wrap items-center gap-2">
-        <span className="ph-label mr-1">Severity:</span>
+        <span className="ph-label mr-1">{t("page.recs.filter_severity")}</span>
         {(["high", "med", "low"] as const).map((s) => (
           <button
             key={s}
@@ -82,10 +88,10 @@ export default function RecommendationsPage() {
                 : "bg-ph-line text-ph-muted"
             }`}
           >
-            {s}
+            {t(`severity.${s}`)}
           </button>
         ))}
-        <span className="ph-label ml-4 mr-1">Category:</span>
+        <span className="ph-label ml-4 mr-1">{t("page.recs.filter_category")}</span>
         {CATEGORIES.map((c) => (
           <button
             key={c}
@@ -96,18 +102,18 @@ export default function RecommendationsPage() {
                 : "bg-ph-line text-ph-muted"
             }`}
           >
-            {c}
+            {t(`category.${c}`)}
           </button>
         ))}
         <span className="ml-auto text-xs text-ph-muted">
-          Showing {filtered.length} of {bundle.recs.length}
+          {t("page.recs.showing", { n: filtered.length, total: bundle.recs.length })}
         </span>
       </div>
 
       <div className="space-y-4">
         {filtered.length === 0 && (
           <div className="ph-card p-10 text-center text-ph-muted">
-            No recommendations match the current filters.
+            {t("page.recs.empty")}
           </div>
         )}
         {filtered.map((r) => (
